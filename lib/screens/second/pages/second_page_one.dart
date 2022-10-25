@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class MySecondPageFragmentOne extends StatefulWidget {
   const MySecondPageFragmentOne({super.key, required this.title});
@@ -10,17 +13,35 @@ class MySecondPageFragmentOne extends StatefulWidget {
 }
 
 class _MySecondPageFragmentOneState extends State<MySecondPageFragmentOne> {
-  int _counter = 0;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+  var stringToSave = TextEditingController();
+
+  static const storage = FlutterSecureStorage(); // FlutterSecureStorage를 storage로 저장
+  dynamic secretInfo = ''; // storage에 있는 유저 정보를 저장
+
+  //flutter_secure_storage 사용을 위한 초기화 작업
+  @override
+  void initState() {
+    super.initState();
+
+    // 비동기로 flutter secure storage 정보를 불러오는 작업
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
     });
+  }
+
+  _asyncMethod() async {
+    // read 함수로 key값에 맞는 정보를 불러오고 데이터타입은 String 타입
+    // 데이터가 없을때는 null을 반환
+    secretInfo = await storage.read(key:'stringToSave');
+
+    // user의 정보가 있다면 로그인 후 들어가는 첫 페이지로 넘어가게 합니다.
+    if (secretInfo != null) {
+      print('Info exists');
+      stringToSave.text = secretInfo;
+    } else {
+      print('No Info');
+    }
   }
 
   @override
@@ -33,35 +54,46 @@ class _MySecondPageFragmentOneState extends State<MySecondPageFragmentOne> {
     // than having to individually change instances of widgets.
     return Scaffold(
       body: Center(
+        
         // Center is a layout widget. It takes a single child and positions it
         // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times ^.^:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
+        child: Container(padding: EdgeInsets.all(20),child: Column(
+            // Column is also a layout widget. It takes a list of children and
+            // arranges them vertically. By default, it sizes itself to fit its
+            // children horizontally, and tries to be as tall as its parent.
+            //
+            // Invoke "debug painting" (press "p" in the console, choose the
+            // "Toggle Debug Paint" action from the Flutter Inspector in Android
+            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+            // to see the wireframe for each widget.
+            //
+            // Column has various properties to control how it sizes itself and
+            // how it positions its children. Here we use mainAxisAlignment to
+            // center the children vertically; the main axis here is the vertical
+            // axis because Columns are vertical (the cross axis would be
+            // horizontal).
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              TextField(
+                controller: stringToSave,
+                decoration: InputDecoration(
+                  labelText: 'String To Save',
+                ),
+              ),
+              ElevatedButton(
+                child: const Text('data'),
+                onPressed: () {
+                  log("SS");
+                  saveSecret(storage, stringToSave.text);
+                },
+              )
+            ],)
         ),
-      ),
+      )
     );
   }
+}
+
+Future<void> saveSecret (FlutterSecureStorage storage, String secret) async {
+  await storage.write(key:'stringToSave', value: secret);
 }

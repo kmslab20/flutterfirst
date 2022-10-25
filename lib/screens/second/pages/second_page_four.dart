@@ -27,7 +27,8 @@ class MySecondPageFragmentFour extends StatelessWidget {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               Expanded(
-                  child: Container(
+                  child:
+                  Container(
                     margin: const EdgeInsets.only(top: 20),
                     child: AnimationLimiter(
                       child: ListView.builder(
@@ -38,7 +39,7 @@ class MySecondPageFragmentFour extends StatelessWidget {
                             child: SlideAnimation(
                               verticalOffset: 50.0,
                               child: FadeInAnimation(
-                                child: ExCustomItem(exModel: exList[exList.length - 1]),
+                                child: ExCustomItem(exModel: exList[index]),
                               ),
                             )
                           );
