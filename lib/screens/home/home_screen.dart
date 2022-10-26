@@ -1,8 +1,10 @@
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutterfirst/screens/second/second_screen.dart';
+import 'package:flutterfirst/screens/third/third_screen.dart';
 import 'package:get/get.dart';
+
+import '../../main.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -65,10 +67,17 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               ElevatedButton(
-                child: const Text('data'),
+                child: const Text('Second'),
                 onPressed: () {
                   log("SS");
                   Get.to(() => const MySecondPage(title: 'second'));
+                },
+              ),
+              ElevatedButton(
+                child: const Text('Third'),
+                onPressed: () {
+                  log("SS");
+                  Get.to(() => TakePictureScreen(camera: cameras[0],));
                 },
               ),
             ],
